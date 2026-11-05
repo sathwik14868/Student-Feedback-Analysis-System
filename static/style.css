@@ -1,0 +1,161 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1e293b;
+}
+
+.navbar {
+    background: #172554;
+    color: white;
+    padding: 22px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+}
+
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #1e40af, #6366f1);
+    color: white;
+}
+
+.hero h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 35px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 25px;
+    background: #ffffff;
+    color: #1e40af;
+    text-decoration: none;
+    border-radius: 8px;
+    margin: 8px;
+    font-weight: bold;
+}
+
+.secondary {
+    background: #172554;
+    color: white;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    padding: 60px 7%;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    width: 280px;
+    text-align: center;
+    box-shadow: 0 3px 12px #dbe2ef;
+}
+
+.card h2 {
+    color: #1e40af;
+    margin-bottom: 15px;
+}
+
+footer {
+    text-align: center;
+    background: #172554;
+    color: white;
+    padding: 20px;
+}
+.feedback-form {
+    max-width: 650px;
+    margin: 40px auto;
+    padding: 35px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #dbe2ef;
+}
+
+.feedback-form label {
+    display: block;
+    margin: 20px 0 8px;
+    font-weight: bold;
+}
+
+.feedback-form select,
+.feedback-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.feedback-form h3 {
+    margin-top: 25px;
+    color: #1e40af;
+}
+
+.feedback-form button {
+    border: none;
+    cursor: pointer;
+    margin-top: 25px;
+}
+.dashboard-content {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 25px;
+    text-align: center;
+}
+
+.dashboard-content h2 {
+    color: #1e40af;
+    margin: 30px 0 20px;
+}
+
+.dashboard-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.dashboard-content th,
+.dashboard-content td {
+    border: 1px solid #ddd;
+    padding: 14px;
+}
+
+.dashboard-content th {
+    background: #172554;
+    color: white;
+}
+
+.dashboard-content img {
+    width: 80%;
+    max-width: 750px;
+    margin: 20px auto 40px;
+    display: block;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+}

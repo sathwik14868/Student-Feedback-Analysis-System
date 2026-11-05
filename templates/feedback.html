@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback Form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <h2>Student Feedback System</h2>
+        <a href="/">Home</a>
+    </nav>
+
+    <section class="hero">
+        <h1>Student Feedback Form</h1>
+        <p>Your feedback helps us improve education quality.</p>
+    </section>
+
+    <form class="feedback-form" method="POST" action="/feedback">
+
+        <label>Select Course</label>
+        <select name="course_id" required>
+            <option value="">Choose a course</option>
+
+            {% for course in courses %}
+                <option value="{{ course.course_id }}">
+                    {{ course.course_name }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <h3>Rate the following (1 to 5)</h3>
+
+        {% for question in questions %}
+
+            <label>{{ loop.index }}. {{ question.question_text }}</label>
+
+            <select name="rating_{{ question.question_id }}" required>
+                <option value="">Select rating</option>
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Average</option>
+                <option value="4">4 - Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+
+        {% endfor %}
+
+        <label>Additional Comments (Optional)</label>
+
+        <textarea
+            name="comment"
+            rows="4"
+            placeholder="Share your suggestions...">
+        </textarea>
+
+        <button type="submit" class="btn">Submit Feedback</button>
+
+    </form>
+
+    <footer>
+        <p>Student Feedback Analysis System | 2026</p>
+    </footer>
+
+</body>
+</html>

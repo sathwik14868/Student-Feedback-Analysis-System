@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Feedback Details</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            background: #f4f6fb;
+        }
+
+        .details-container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .profile-card,
+        .stat-card,
+        .feedback-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .profile-card h1 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-item {
+            padding: 12px;
+            background: #f3f6fc;
+            border-radius: 8px;
+        }
+
+        .profile-item strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-card h2 {
+            font-size: 28px;
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #555;
+        }
+
+        .feedback-card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        .feedback-card p {
+            line-height: 1.6;
+        }
+
+        .rating {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .rating-1 { color: #dc2626; }
+        .rating-2 { color: #ea580c; }
+        .rating-3 { color: #ca8a04; }
+        .rating-4 { color: #16a34a; }
+        .rating-5 { color: #2563eb; }
+
+        .comment-box {
+            background: #f3f6fc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 7px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #1d4ed8;
+        }
+
+        .empty-message {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <h2>Student Feedback System</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+
+    <section class="details-container">
+
+        <a href="{{ url_for('dashboard') }}" class="back-button">
+            ← Back to Dashboard
+        </a>
+
+
+        <!-- Student Profile -->
+        <div class="profile-card">
+
+            <h1>Student Details</h1>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <strong>Student Name</strong>
+                    {{ student.full_name }}
+                </div>
+
+                <div class="profile-item">
+                    <strong>Roll Number</strong>
+                    {{ student.roll_number or 'Not Updated' }}
+                </div>
+
+                <div class="profile-item">
+                    <strong>Branch</strong>
+                    {{ student.branch or 'Not Specified' }}
+                </div>
+
+                <div class="profile-item">
+                    <strong>Email</strong>
+                    {{ student.email }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Student Statistics -->
+        <div class="statistics">
+
+            <div class="stat-card">
+                <p>Total Submissions</p>
+                <h2>{{ statistics.total_submissions }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Total Ratings</p>
+                <h2>{{ statistics.total_ratings }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Average Rating</p>
+
+                <h2>
+                    {% if statistics.average_rating is not none %}
+                        {{ "%.2f"|format(statistics.average_rating) }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </h2>
+
+                <p>Out of 5</p>
+            </div>
+
+        </div>
+
+
+        <!-- Feedback History -->
+        <h2>Complete Feedback History</h2>
+
+        {% if feedback_details %}
+
+            {% for feedback in feedback_details %}
+
+            <div class="feedback-card">
+
+                <h3>{{ feedback.course_name }}</h3>
+
+                <p>
+                    <strong>Question:</strong>
+                    {{ feedback.question_text }}
+                </p>
+
+                <p>
+                    <strong>Rating:</strong>
+
+                    <span class="rating rating-{{ feedback.rating }}">
+                        {{ feedback.rating }} / 5 ★
+                    </span>
+                </p>
+
+                <p>
+                    <strong>Submission ID:</strong>
+                    {{ feedback.submission_id }}
+                </p>
+
+                <p>
+                    <strong>Submitted At:</strong>
+                    {{ feedback.submitted_at }}
+                </p>
+
+                <div class="comment-box">
+
+                    <strong>Comment:</strong>
+
+                    <p>
+                        {% if feedback.comment_optional %}
+                            {{ feedback.comment_optional }}
+                        {% else %}
+                            No comment provided.
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="empty-message">
+                This student has not submitted any feedback yet.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <footer>
+        <p>Student Feedback Analysis System | 2026</p>
+    </footer>
+
+</body>
+</html>

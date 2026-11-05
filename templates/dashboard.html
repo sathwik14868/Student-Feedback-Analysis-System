@@ -1,0 +1,525 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .dashboard-content {
+            width: 95%;
+            max-width: 1250px;
+            margin: 40px auto;
+            overflow-x: auto;
+        }
+
+        .dashboard-content h2 {
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-content table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+            background: white;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-content th,
+        .dashboard-content td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .dashboard-content th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .dashboard-content tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        .dashboard-content img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 20px auto;
+        }
+
+        .empty-message {
+            padding: 15px;
+            background: #f2f2f2;
+            border-radius: 8px;
+        }
+
+        .rating-1 { color: #dc2626; font-weight: bold; }
+        .rating-2 { color: #ea580c; font-weight: bold; }
+        .rating-3 { color: #ca8a04; font-weight: bold; }
+        .rating-4 { color: #16a34a; font-weight: bold; }
+        .rating-5 { color: #2563eb; font-weight: bold; }
+
+        .section-note {
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 22px;
+            margin: 25px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .filter-section h2 {
+            margin-top: 0;
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-controls input,
+        .filter-controls select {
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            min-width: 180px;
+        }
+
+        .filter-controls button {
+            padding: 11px 18px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .filter-controls button:hover {
+            background: #1d4ed8;
+        }
+
+        .filter-section label {
+            font-weight: bold;
+        }
+
+        .student-link {
+            color: #2563eb;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .student-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>Student Feedback System</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Admin Dashboard</h1>
+        <p>Student Feedback Analysis and Reports</p>
+    </section>
+
+    <!-- Dashboard Metrics -->
+    <section class="features">
+
+        <div class="card">
+            <h2>Total Registered Students</h2>
+            <h1>{{ total_students }}</h1>
+        </div>
+
+        <div class="card">
+            <h2>Total Submissions</h2>
+            <h1>{{ result.total_submissions if result else 0 }}</h1>
+        </div>
+
+        <div class="card">
+            <h2>Average Rating</h2>
+            <h1>
+                {% if result and result.overall_average is not none %}
+                    {{ "%.2f"|format(result.overall_average) }} / 5
+                {% else %}
+                    0 / 5
+                {% endif %}
+            </h1>
+        </div>
+
+        <div class="card">
+            <h2>Total Ratings</h2>
+            <h1>{{ result.total_ratings if result else 0 }}</h1>
+        </div>
+
+    </section>
+
+    <section class="dashboard-content">
+
+        <a href="/export" class="btn">Download Feedback Report</a>
+
+        <!-- Filters -->
+        <div class="filter-section">
+
+            <h2>Filter Student Records</h2>
+
+            <div class="filter-controls">
+
+                <label for="branchFilter">Branch:</label>
+
+                <select id="branchFilter">
+                    <option value="">All Branches</option>
+
+                    {% for row in branch_analysis %}
+                    {% if row.branch %}
+                    <option value="{{ row.branch|lower }}">
+                        {{ row.branch }}
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+
+                <label for="rollSearch">Roll Number:</label>
+
+                <input
+                    type="text"
+                    id="rollSearch"
+                    placeholder="Search roll number"
+                >
+
+                <label for="ratingFilter">Rating:</label>
+
+                <select id="ratingFilter">
+                    <option value="">All Ratings</option>
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5">5 Stars</option>
+                </select>
+
+                <button type="button" onclick="resetFilters()">
+                    Reset Filters
+                </button>
+
+            </div>
+        </div>
+
+
+        <!-- All Registered Students -->
+        <h2>All Registered Students</h2>
+
+        <p class="section-note">
+            Click a student's name to view their complete feedback report.
+        </p>
+
+        {% if all_students %}
+
+        <table id="studentsTable">
+            <tr>
+                <th>S.No</th>
+                <th>Student Name</th>
+                <th>Roll Number</th>
+                <th>Branch</th>
+                <th>Email</th>
+            </tr>
+
+            {% for student in all_students %}
+            <tr class="student-row"
+                data-branch="{{ (student.branch or '')|lower }}"
+                data-roll="{{ (student.roll_number or '')|lower }}">
+
+                <td>{{ loop.index }}</td>
+
+                <td>
+                    <a class="student-link"
+                       href="{{ url_for('student_details', student_id=student.student_id) }}">
+                        {{ student.full_name }}
+                    </a>
+                </td>
+
+                <td>{{ student.roll_number or 'Not Updated' }}</td>
+                <td>{{ student.branch or 'Not Specified' }}</td>
+                <td>{{ student.email }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p class="empty-message">No registered students found.</p>
+        {% endif %}
+
+
+        <!-- Student-wise Feedback Summary -->
+        <h2>Student-wise Feedback Report</h2>
+
+        {% if student_summary %}
+
+        <table id="studentSummaryTable">
+            <tr>
+                <th>S.No</th>
+                <th>Student Name</th>
+                <th>Roll Number</th>
+                <th>Branch</th>
+                <th>Total Submissions</th>
+                <th>Total Ratings</th>
+                <th>Average Rating</th>
+            </tr>
+
+            {% for student in student_summary %}
+            <tr class="summary-row"
+                data-branch="{{ (student.branch or '')|lower }}"
+                data-roll="{{ (student.roll_number or '')|lower }}">
+
+                <td>{{ loop.index }}</td>
+
+                <td>
+                    <a class="student-link"
+                       href="{{ url_for('student_details', student_id=student.student_id) }}">
+                        {{ student.full_name }}
+                    </a>
+                </td>
+
+                <td>{{ student.roll_number or 'Not Updated' }}</td>
+                <td>{{ student.branch or 'Not Specified' }}</td>
+                <td>{{ student.total_submissions }}</td>
+                <td>{{ student.total_ratings }}</td>
+
+                <td>
+                    {% if student.average_rating is not none %}
+                        {{ "%.2f"|format(student.average_rating) }} / 5
+                    {% else %}
+                        No Feedback
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p class="empty-message">No student summary records available.</p>
+        {% endif %}
+
+
+        <!-- Course Analysis -->
+        {% if result %}
+
+        <h2>Course-wise Average Ratings</h2>
+
+        <table>
+            <tr>
+                <th>Course Name</th>
+                <th>Average Rating</th>
+                <th>Number of Ratings</th>
+            </tr>
+
+            {% for row in result.course_analysis.itertuples() %}
+            <tr>
+                <td>{{ row.course_name }}</td>
+                <td>{{ "%.2f"|format(row.mean) }}</td>
+                <td>{{ row.count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Course-wise Average Rating Chart</h2>
+
+        <img
+            src="{{ url_for('static', filename='course_chart.png') }}"
+            alt="Course Rating Chart"
+        >
+
+        <h2>Rating Distribution Chart</h2>
+
+        <img
+            src="{{ url_for('static', filename='rating_chart.png') }}"
+            alt="Rating Distribution Chart"
+        >
+
+        {% endif %}
+
+
+        <!-- Branch Analysis -->
+        <h2>Branch-wise Star Rating Analysis</h2>
+
+        {% if branch_analysis %}
+
+        <table>
+            <tr>
+                <th>Branch</th>
+                <th>1 Star</th>
+                <th>2 Stars</th>
+                <th>3 Stars</th>
+                <th>4 Stars</th>
+                <th>5 Stars</th>
+                <th>Total Ratings</th>
+            </tr>
+
+            {% for row in branch_analysis %}
+            <tr>
+                <td>{{ row.branch }}</td>
+                <td class="rating-1">{{ row.one_star }}</td>
+                <td class="rating-2">{{ row.two_star }}</td>
+                <td class="rating-3">{{ row.three_star }}</td>
+                <td class="rating-4">{{ row.four_star }}</td>
+                <td class="rating-5">{{ row.five_star }}</td>
+                <td>
+                    {{ row.one_star + row.two_star + row.three_star + row.four_star + row.five_star }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p class="empty-message">No branch data available.</p>
+        {% endif %}
+
+
+        <!-- Complete Feedback Details -->
+        <h2>Complete Student Feedback Details</h2>
+
+        {% if all_feedback %}
+
+        <table id="feedbackTable">
+            <tr>
+                <th>S.No</th>
+                <th>Student Name</th>
+                <th>Roll Number</th>
+                <th>Branch</th>
+                <th>Course</th>
+                <th>Question</th>
+                <th>Rating</th>
+                <th>Submitted At</th>
+            </tr>
+
+            {% for student in all_feedback %}
+            <tr class="feedback-row"
+                data-branch="{{ (student.branch or '')|lower }}"
+                data-roll="{{ (student.roll_number or '')|lower }}"
+                data-rating="{{ student.rating }}">
+
+                <td>{{ loop.index }}</td>
+                <td>{{ student.full_name }}</td>
+                <td>{{ student.roll_number or 'Not Updated' }}</td>
+                <td>{{ student.branch }}</td>
+                <td>{{ student.course_name }}</td>
+                <td>{{ student.question_text }}</td>
+
+                <td class="rating-{{ student.rating }}">
+                    {{ student.rating }} / 5
+                </td>
+
+                <td>{{ student.submitted_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p class="empty-message">No student feedback records available.</p>
+        {% endif %}
+
+    </section>
+
+
+    <footer>
+        <p>Student Feedback Analysis System | 2026</p>
+    </footer>
+
+
+    <!-- FILTER JAVASCRIPT -->
+    <script>
+
+        function applyFilters() {
+
+            const branch = document.getElementById("branchFilter").value;
+            const roll = document.getElementById("rollSearch").value.trim().toLowerCase();
+            const rating = document.getElementById("ratingFilter").value;
+
+            // Registered Students
+            document.querySelectorAll(".student-row").forEach(function(row) {
+
+                const studentBranch = row.dataset.branch;
+                const studentRoll = row.dataset.roll;
+
+                const branchMatch = !branch || studentBranch === branch;
+                const rollMatch = studentRoll.includes(roll);
+
+                row.style.display =
+                    branchMatch && rollMatch ? "" : "none";
+            });
+
+
+            // Student Summary
+            document.querySelectorAll(".summary-row").forEach(function(row) {
+
+                const studentBranch = row.dataset.branch;
+                const studentRoll = row.dataset.roll;
+
+                const branchMatch = !branch || studentBranch === branch;
+                const rollMatch = studentRoll.includes(roll);
+
+                row.style.display =
+                    branchMatch && rollMatch ? "" : "none";
+            });
+
+
+            // Complete Feedback
+            document.querySelectorAll(".feedback-row").forEach(function(row) {
+
+                const studentBranch = row.dataset.branch;
+                const studentRoll = row.dataset.roll;
+                const studentRating = row.dataset.rating;
+
+                const branchMatch = !branch || studentBranch === branch;
+                const rollMatch = studentRoll.includes(roll);
+                const ratingMatch = !rating || studentRating === rating;
+
+                row.style.display =
+                    branchMatch && rollMatch && ratingMatch ? "" : "none";
+            });
+
+        }
+
+
+        function resetFilters() {
+
+            document.getElementById("branchFilter").value = "";
+            document.getElementById("rollSearch").value = "";
+            document.getElementById("ratingFilter").value = "";
+
+            applyFilters();
+        }
+
+
+        document.getElementById("branchFilter")
+            .addEventListener("change", applyFilters);
+
+        document.getElementById("rollSearch")
+            .addEventListener("input", applyFilters);
+
+        document.getElementById("ratingFilter")
+            .addEventListener("change", applyFilters);
+
+    </script>
+
+</body>
+</html>

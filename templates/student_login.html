@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Student Login</h2>
+    <p>Login to submit your feedback</p>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/student-login">
+        <input type="email" name="email"
+               placeholder="Enter Email" required>
+
+        <input type="password" name="password"
+               placeholder="Enter Password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account?
+        <a href="/register">Register</a>
+    </p>
+
+    <a href="/">Back to Home</a>
+</div>
+
+</body>
+</html>

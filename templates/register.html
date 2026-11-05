@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .register-container {
+            width: 350px;
+            max-width: 85%;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .register-container input,
+        .register-container select {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .register-container button {
+            width: 98%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+
+        <h2>Student Registration</h2>
+        <p>Create your student account</p>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success">{{ success }}</p>
+        {% endif %}
+
+        <form method="POST" action="/register">
+
+            <input
+                type="text"
+                name="full_name"
+                placeholder="Enter Full Name"
+                required
+            >
+
+            <input
+                type="text"
+                name="roll_number"
+                placeholder="Enter Roll Number"
+                required
+            >
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter Email"
+                required
+            >
+
+            <label for="branch">Select Your Branch</label>
+
+            <select name="branch" id="branch" required>
+                <option value="">Choose Branch</option>
+                <option value="CSE">CSE</option>
+                <option value="AIML">AIML</option>
+                <option value="CSM">CSM</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="Civil">Civil</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Create Password"
+                minlength="8"
+                required
+            >
+
+            <button type="submit">Register</button>
+
+        </form>
+
+        <p>Already have an account?
+            <a href="/student-login">Login</a>
+        </p>
+
+        <a href="/">Back to Home</a>
+
+    </div>
+
+</body>
+</html>

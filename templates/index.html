@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback Analysis System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <h2>Student Feedback System</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/student-login">Student Login</a>
+            <a href="/register">Register</a>
+            <a href="/login">Admin Login</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Student Feedback Analysis System</h1>
+
+        <p>
+            Your feedback matters! Help us improve the quality
+            of education by sharing your experience.
+        </p>
+
+        <a href="/student-login" class="btn">Student Login</a>
+        <a href="/register" class="btn secondary">Register</a>
+        <br><br>
+        <a href="/login" class="btn secondary">Admin Login</a>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+
+        <div class="card">
+            <h2>Easy Feedback</h2>
+            <p>
+                Submit course ratings through a simple
+                and user-friendly feedback form.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Student Portal</h2>
+            <p>
+                Register and log in securely to submit
+                your course feedback.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Smart Analysis</h2>
+            <p>
+                Understand feedback through average ratings,
+                charts and reports.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Student Feedback Analysis System | 2026</p>
+    </footer>
+
+</body>
+</html>
