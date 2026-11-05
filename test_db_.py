@@ -1,8 +1,8 @@
 from database import get_connection
 
-conn = get_connection()
-
-if conn.is_connected():
-    print("MySQL Connected Successfully!")
-
-conn.close()
+try:
+    conn = get_connection()
+    print("MySQL connected successfully!")
+    conn.close()
+except Exception as e:
+    print("Connection failed:", e)
